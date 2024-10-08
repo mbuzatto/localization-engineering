@@ -1,0 +1,34 @@
+import os
+import re
+
+# Get the directory where the script is located
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Set the XLIFF folder to the script's directory
+xliff_folder = script_dir
+
+# Function to modify XLIFF file
+def modify_xliff_file(file_path):
+    with open(file_path, 'r', encoding='utf-8') as file:
+        content = file.read()
+
+    # Check if the file contains 'de-DE' or 'it-IT' before modifying
+    if 'target-language="de-DE"' in content or 'target-language="it-IT"' in content:
+        # Use regex to find and replace the target language with just 'de' or 'it'
+        modified_content = re.sub(r'(target-language="de)-DE"', r'\1"', content)
+        modified_content = re.sub(r'(target-language="it)-IT"', r'\1"', modified_content)
+
+        # Save the modified content to the same file
+        with open(file_path, 'w', encoding='utf-8') as file:
+            file.write(modified_content)
+
+        print(f"Modified: {file_path}")
+    else:
+        print(f"Skipped (no de-DE or it-IT): {file_path}")
+
+# Get all XLIFF files in the script's directory
+for file_name in os.listdir(xliff_folder):
+    if file_name.endswith('.xliff'):
+        file_path = os.path.join(xliff_folder, file_name)
+        print(f"Processing file: {file_path}")
+        modify_xliff_file(file_path)
